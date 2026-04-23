@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d0d1a;
+  --bg-card: #141425;
+  --bg-card-hover: #1a1a32;
+  --border: rgba(255,255,255,0.06);
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --text-hint: #555;
+  --accent: #4cc9f0;
+  --accent-2: #4361ee;
+  --gradient: linear-gradient(135deg, #4361ee, #4cc9f0);
+  --font: 'DM Sans', system-ui, sans-serif;
+  --radius: 16px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Noise */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Ambient glow */
+body::after {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(67,97,238,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 960px;
+  padding: 3rem 2rem;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.header-label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  background: rgba(76,201,240,0.08);
+  border: 1px solid rgba(76,201,240,0.15);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 0.6rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-hint);
+  margin-bottom: 1.2rem;
+  padding-left: 4px;
+}
+
+.section-gap {
+  margin-top: 2.5rem;
+}
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(76,201,240,0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(67,97,238,0.06);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+/* Card compact for 3-col */
+.card-compact {
+  padding: 2rem 1.5rem;
+  gap: 1rem;
+}
+
+.card-compact .card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  font-size: 24px;
+}
+
+.card-compact h2 {
+  font-size: 1.05rem;
+}
+
+.card-compact p {
+  font-size: 0.82rem;
+}
+
+/* Icon themes */
+.card-icon.outlook {
+  background: linear-gradient(135deg, #0078d4, #28a8ea);
+  box-shadow: 0 6px 24px rgba(0,120,212,0.3);
+}
+
+.card-icon.teams {
+  background: linear-gradient(135deg, #5b5fc7, #7b83eb);
+  box-shadow: 0 6px 24px rgba(91,95,199,0.3);
+}
+
+.card-icon.gmail {
+  background: linear-gradient(135deg, #ea4335, #fbbc04);
+  box-shadow: 0 6px 24px rgba(234,67,53,0.3);
+}
+
+.card-icon.onedrive {
+  background: linear-gradient(135deg, #0078d4, #00bcf2);
+  box-shadow: 0 6px 24px rgba(0,120,212,0.3);
+}
+
+.card-icon.op-tools {
+  background: linear-gradient(135deg, #4361ee, #4cc9f0);
+  box-shadow: 0 6px 24px rgba(67,97,238,0.3);
+}
+
+.card-icon.fec {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  box-shadow: 0 6px 24px rgba(46,204,113,0.3);
+}
+
+.card-icon.candidate {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  box-shadow: 0 6px 24px rgba(243,156,18,0.3);
+}
+
+.card-icon.sharepoint {
+  background: linear-gradient(135deg, #038387, #00b294);
+  box-shadow: 0 6px 24px rgba(3,131,135,0.3);
+}
+
+.card-icon.calc {
+  background: linear-gradient(135deg, #e94560, #c44569);
+  box-shadow: 0 6px 24px rgba(233,69,96,0.3);
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.card p {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.card-arrow {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  color: var(--text-hint);
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s, gap 0.2s;
+}
+
+.card:hover .card-arrow {
+  color: var(--accent);
+  gap: 10px;
+}
+
+/* ── CALCULATOR ── */
+.calc-card {
+  cursor: pointer;
+}
+
+.calc-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.calc-modal-overlay.open {
+  display: flex;
+}
+
+.calc-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 340px;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.5), 0 0 60px rgba(67,97,238,0.1);
+}
+
+.calc-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient);
+  border-radius: 20px 20px 0 0;
+}
+
+.calc-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.calc-close:hover { color: var(--text); }
+
+.calc-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text);
+  text-align: center;
+}
+
+.calc-display {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  text-align: right;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.calc-expr {
+  font-size: 0.82rem;
+  color: var(--text-hint);
+  min-height: 1.2em;
+  word-break: break-all;
+}
+
+.calc-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'DM Sans', monospace;
+  letter-spacing: -0.5px;
+}
+
+.calc-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.calc-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+}
+
+.calc-btn:active {
+  transform: translateY(0);
+  background: rgba(255,255,255,0.07);
+}
+
+.calc-btn.op {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.calc-btn.equals {
+  background: var(--gradient);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+}
+
+.calc-btn.equals:hover {
+  box-shadow: 0 4px 20px rgba(67,97,238,0.4);
+}
+
+.calc-btn.clear {
+  color: #e94560;
+  font-weight: 600;
+}
+
+.calc-btn.wide {
+  grid-column: span 2;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  margin-top: 4rem;
+  color: var(--text-hint);
+  font-size: 0.75rem;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .header h1 { font-size: 2rem; }
+  .page { padding: 2rem 1.2rem; }
+  .card { padding: 2rem 1.5rem; }
+  .card-compact { padding: 1.5rem 1.2rem; }
+  .calc-modal { width: 92vw; max-width: 340px; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid { gap: 1.5rem; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="header">
+    <div class="header-label">Quick Access</div>
+    <h1>My Dashboard</h1>
+    <p>Everything you need in one place. Pick a tool or open an app.</p>
+  </header>
+
+  <!-- ── APPS ── -->
+  <div class="section-label">Apps</div>
+  <div class="grid-3">
+
+    <a class="card card-compact" href="https://outlook.office.com" target="_blank">
+      <div class="card-icon outlook">📧</div>
+      <h2>Outlook</h2>
+      <p>Email, calendar, and contacts.</p>
+      <span class="card-arrow">Open →</span>
+    </a>
+
+    <a class="card card-compact" href="https://teams.microsoft.com" target="_blank">
+      <div class="card-icon teams">💬</div>
+      <h2>Teams</h2>
+      <p>Chat, calls, and meetings.</p>
+      <span class="card-arrow">Open →</span>
+    </a>
+
+    <a class="card card-compact" href="https://mail.google.com" target="_blank">
+      <div class="card-icon gmail">✉️</div>
+      <h2>Gmail</h2>
+      <p>Google email and workspace.</p>
+      <span class="card-arrow">Open →</span>
+    </a>
+
+    <a class="card card-compact" href="https://onedrive.live.com" target="_blank">
+      <div class="card-icon onedrive">☁️</div>
+      <h2>OneDrive</h2>
+      <p>Cloud files and storage.</p>
+      <span class="card-arrow">Open →</span>
+    </a>
+
+    <a class="card card-compact" href="https://jpboyer84.github.io/op-tools/" target="_blank">
+      <div class="card-icon op-tools">🛠️</div>
+      <h2>OP Tools</h2>
+      <p>Internal tools hub.</p>
+      <span class="card-arrow">Open →</span>
+    </a>
+
+    <div class="card card-compact calc-card" onclick="openCalc()">
+      <div class="card-icon calc">🧮</div>
+      <h2>Calculator</h2>
+      <p>Quick math on the fly.</p>
+      <span class="card-arrow">Open →</span>
+    </div>
+
+  </div>
+
+  <!-- ── TRACKERS ── -->
+  <div class="section-label section-gap">Trackers</div>
+  <div class="grid">
+
+    <a class="card" href="https://docs.google.com/spreadsheets/d/1dgpOlafL3dOMWoxCMS8dLEDVMwAfbfFr1pj6QquttRg/edit?gid=0#gid=0" target="_blank">
+      <div class="card-icon fec">💰</div>
+      <h2>FEC Tracker</h2>
+      <p>FEC tracking spreadsheet for compensation data, salary ranges, and offer details.</p>
+      <span class="card-arrow">Open tool →</span>
+    </a>
+
+    <a class="card" href="https://docs.google.com/spreadsheets/d/1tRhA2N05izbsiJvzmvH1Y6PxKCNKoKn3BdtS_h8mXX0/edit?gid=0#gid=0" target="_blank">
+      <div class="card-icon candidate">👤</div>
+      <h2>Candidate Tracker</h2>
+      <p>Track candidates through the pipeline — status, notes, and follow-ups all in one sheet.</p>
+      <span class="card-arrow">Open tool →</span>
+    </a>
+
+    <a class="card" href="https://myfedex.sharepoint.com.mcas.ms/teams/TASWPFDW/Lists/Job%20Tracker/AllItems.aspx?ovuser=b945c813%2Ddce6%2D41f8%2D8457%2D5a12c2fe15bf%2Cjim%2Eboyer%2Eosv%40fedex%2Ecom&OR=Teams%2DHL&CT=1770134058675&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIxNDE1LzI2MDEwNDAwOTI1IiwiSGFzRmVkZXJhdGVkVXNlciI6ZmFsc2V9" target="_blank">
+      <div class="card-icon sharepoint">📋</div>
+      <h2>SharePoint Tracker</h2>
+      <p>Job tracker list on SharePoint — requisitions, assignments, and team workload at a glance.</p>
+      <span class="card-arrow">Open tool →</span>
+    </a>
+
+  </div>
+
+  <div class="footer">My Dashboard — Internal use only</div>
+</div>
+
+<!-- ── CALCULATOR MODAL ── -->
+<div class="calc-modal-overlay" id="calcOverlay" onclick="if(event.target===this)closeCalc()">
+  <div class="calc-modal">
+    <button class="calc-close" onclick="closeCalc()">✕</button>
+    <div class="calc-title">Calculator</div>
+    <div class="calc-display">
+      <div class="calc-expr" id="calcExpr"></div>
+      <div class="calc-value" id="calcValue">0</div>
+    </div>
+    <div class="calc-buttons">
+      <button class="calc-btn clear" onclick="calcClear()">AC</button>
+      <button class="calc-btn op" onclick="calcInput('(')">(</button>
+      <button class="calc-btn op" onclick="calcInput(')')">)</button>
+      <button class="calc-btn op" onclick="calcInput('÷')">÷</button>
+
+      <button class="calc-btn" onclick="calcInput('7')">7</button>
+      <button class="calc-btn" onclick="calcInput('8')">8</button>
+      <button class="calc-btn" onclick="calcInput('9')">9</button>
+      <button class="calc-btn op" onclick="calcInput('×')">×</button>
+
+      <button class="calc-btn" onclick="calcInput('4')">4</button>
+      <button class="calc-btn" onclick="calcInput('5')">5</button>
+      <button class="calc-btn" onclick="calcInput('6')">6</button>
+      <button class="calc-btn op" onclick="calcInput('-')">−</button>
+
+      <button class="calc-btn" onclick="calcInput('1')">1</button>
+      <button class="calc-btn" onclick="calcInput('2')">2</button>
+      <button class="calc-btn" onclick="calcInput('3')">3</button>
+      <button class="calc-btn op" onclick="calcInput('+')">+</button>
+
+      <button class="calc-btn" onclick="calcInput('0')">0</button>
+      <button class="calc-btn" onclick="calcInput('.')">.</button>
+      <button class="calc-btn" onclick="calcBackspace()">⌫</button>
+      <button class="calc-btn equals" onclick="calcEval()">=</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Calculator Logic ──
+let calcStr = '';
+let justEvaluated = false;
+
+function openCalc() {
+  document.getElementById('calcOverlay').classList.add('open');
+}
+
+function closeCalc() {
+  document.getElementById('calcOverlay').classList.remove('open');
+}
+
+function calcClear() {
+  calcStr = '';
+  justEvaluated = false;
+  document.getElementById('calcValue').textContent = '0';
+  document.getElementById('calcExpr').textContent = '';
+}
+
+function calcInput(ch) {
+  if (justEvaluated && '0123456789.('.includes(ch)) {
+    calcStr = '';
+    document.getElementById('calcExpr').textContent = '';
+    justEvaluated = false;
+  }
+  justEvaluated = false;
+  calcStr += ch;
+  document.getElementById('calcValue').textContent = calcStr;
+}
+
+function calcBackspace() {
+  calcStr = calcStr.slice(0, -1);
+  justEvaluated = false;
+  document.getElementById('calcValue').textContent = calcStr || '0';
+}
+
+function calcEval() {
+  if (!calcStr) return;
+  try {
+    const expr = calcStr
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-');
+    const result = Function('"use strict"; return (' + expr + ')')();
+    const display = Number.isFinite(result)
+      ? parseFloat(result.toPrecision(12)).toString()
+      : 'Error';
+    document.getElementById('calcExpr').textContent = calcStr + ' =';
+    document.getElementById('calcValue').textContent = display;
+    calcStr = display === 'Error' ? '' : display;
+    justEvaluated = true;
+  } catch {
+    document.getElementById('calcExpr').textContent = calcStr + ' =';
+    document.getElementById('calcValue').textContent = 'Error';
+    calcStr = '';
+    justEvaluated = true;
+  }
+}
+
+// Keyboard support when calc is open
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('calcOverlay');
+  if (!overlay.classList.contains('open')) return;
+
+  if (e.key === 'Escape') { closeCalc(); return; }
+  if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calcEval(); return; }
+  if (e.key === 'Backspace') { e.preventDefault(); calcBackspace(); return; }
+  if (e.key === 'c' || e.key === 'C') { calcClear(); return; }
+
+  const map = { '*': '×', '/': '÷', '-': '−' };
+  const ch = map[e.key] || e.key;
+  if ('0123456789.+−×÷()'.includes(ch)) {
+    e.preventDefault();
+    calcInput(ch);
+  }
+});
+</script>
+
+</body>
+</html>
